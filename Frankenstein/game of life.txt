@@ -1,0 +1,17 @@
+cell = 1||0
+
+
+
+
+
+if cell <2 neighbors then
+	die
+else if cell = 2 neighbors then
+	stay alive
+else if cell = 3 neighbors then
+	new cell can be born
+else if cell >4 neighbors then
+	die
+
+end if
+
