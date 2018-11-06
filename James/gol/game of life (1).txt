@@ -1,0 +1,50 @@
+//This symulation will delete and birth cells based on population, overpopulation and under population.
+
+SPACE = [ [CELL, CELL, CELL, CELL, CELL, CELL, CELL, CELL, CELL, CELL, CELL, CELL, CELL, CELL, CELL, CELL], [CELL, CELL, CELL, CELL, CELL, CELL, CELL, CELL, CELL, CELL, CELL, CELL, CELL, CELL, CELL, CELL], 
+	[CELL, CELL, CELL, CELL, CELL, CELL, CELL, CELL, CELL, CELL, CELL, CELL, CELL, CELL, CELL, CELL],[CELL, CELL, CELL, CELL, CELL, CELL, CELL, CELL, CELL, CELL, CELL, CELL, CELL, CELL, CELL, CELL], ]
+
+
+IF CELL is clicked on make TRUE
+
+{
+	IF
+		CELL = TRUE then fill CELL
+	ELSE IF
+		CELL = FALSE then empty CELL
+end IF
+}
+
+	IF CELL = TRUE then clicked CELL = FALSE
+
+//rules of solidarity
+
+{
+
+IF CELL = TRUE is without direct contact with another CELL = TRUE then make CELL = FALSE
+end if
+
+IF CELL = TRUE is with direct contact with 1 other CELL = TRUE then make CELL = FALSE
+end if
+
+}
+
+//rules of overpopulation
+
+{
+
+IF CELL = TRUE is with direct contact with 4 other CELL = TRUE then make CELL = FALSE
+end if
+
+}
+
+//rules of populating
+
+{
+
+IF CELL = FLASE is with direct contact with 3 other CELL = TRUE then make CELL = TRUE
+end if
+
+}
+
+END
+
