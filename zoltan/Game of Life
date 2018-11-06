@@ -1,0 +1,27 @@
+Game of Life
+
+
+Object Cell(COORD, STATE)		//COORD should be given as ROWS(ROW(POSITIONS))
+
+	R9 = [0,1,2,3,4,5,6,7,8,9]
+	R8 = [0,1,2,3,4,5,6,7,8,9]
+	R7 = [0,1,2,3,4,5,6,7,8,9]
+	R6 = [0,1,2,3,4,5,6,7,8,9]
+	R5 = [0,1,2,3,4,5,6,7,8,9]
+	R4 = [0,1,2,3,4,5,6,7,8,9]
+	R3 = [0,1,2,3,4,5,6,7,8,9]
+	R2 = [0,1,2,3,4,5,6,7,8,9]
+	R1 = [0,1,2,3,4,5,6,7,8,9]
+	R0 = [0,1,2,3,4,5,6,7,8,9]
+	ROWS = [R0,R1,R2,R3,R4,R5,R6,R7,R8,R9]		//Each column has 10 squares, and there are 10 columns
+
+	Sub check_State		//State is 1 if the cell is alive, 0 if it is dead)
+		return STATE
+	end
+
+	Sub check_Neighbours()
+		aliveNeighbours = 0
+
+		if Cell(ROWS(COORDX(COORDY)), STATE).check_State = 1 then
+			aliveNeighbours += 1
+		end if
