@@ -1,0 +1,5 @@
+CELL = 1 || 0 
+SPACE = [ [CELL, CELL, CELL, CELL], 
+                 [CELL, CELL, CELL, CELL], 
+	   [CELL, CELL, CELL, CELL], 
+	   [CELL, CELL, CELL, CELL] ]
