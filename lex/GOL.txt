@@ -1,0 +1,71 @@
+**GAME OF LIFE**
+
+SPACE = [ [CELL, CELL, CELL, CELL], [CELL, CELL, CELL, CELL], [CELL, CELL, CELL, CELL], [CELL, CELL, CELL, CELL] ]
+CELL = new Object (setLocation = SPACE [X][Y], setLife = Z)
+
+if X<0 || Y<0 then
+    Z = 0
+endif
+
+N1 = new Object (setLocation = [X][Y+1], setLife = Z)
+N2 = new Object (setLocation = [X][Y-1], setLife = Z)
+N3 = new Object (setLocation = [X-1][Y+1], setLife = Z)
+N4 = new Object (setLocation = [X+1][Y+1], setLife = Z)
+N5 = new Object (setLocation = [X-1][Y-1], setLife = Z)
+N6 = new Object (setLocation = [X+1][Y-1], setLife = Z)
+N7 = new Object (setLocation = [X][Y], setLife = Z)
+N8 = new Object (setLocation = [X][Y], setLife = Z)
+
+N_ARRAY = [N1, N2, N3, N4, N5, N6, N7, N8]
+NEIGHBORS = []
+for N = 0; N < Array.length(N_ARRAY); N++ do
+    if N_ARRAY[N] = 1 then
+	    Array.push (NEIGHBORS, N_ARRAY[N])
+	endif
+done
+for C = 0; C < Array.length(SPACE); C++ do
+    output result(Z)
+done
+TURN2 = NEXTGEN(Z, SPACE, NEIGHBORS)
+TURN3 = NEXTGEN(Z, SPACE, NEIGHBORS)
+output "TURN 2: "
+output TURN2
+output "TURN 3: "
+output TURN3 
+
+Sub NEXTGEN(S, BOARD, NEIGHBORCELLS) do
+    for C = 0; C < Array.length(BOARD); C++ do
+	    if S = 0 then
+		    if Array.length(NEIGHBORCELLS) = 3 then
+			    Z = 1
+			endif
+		else if Z = 1 then
+		    if Array.length(NEIGHBORCELLS) < 2 then
+			    Z = 0
+			endif			
+		endif
+	    output result (S)
+	done
+done
+
+Sub result(S) do
+    DEAD = " "
+	ALIVE = "X"
+    if S = 0 then
+	    output DEAD
+	else if S = 1 then 
+	    output ALIVE
+	endif
+done
+
+
+
+
+
+
+
+
+
+
+
+	
