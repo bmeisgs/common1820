@@ -61,9 +61,36 @@ done
 
 
 
+-----------------------------------------------------
 
 
+CELL= SPACE[2][1]
 
+C1= SPACE[1][0]
+C2= SPACE[1][1]
+C3= SPACE[1][2]
+C4= SPACE[2][0]
+C5= SPACE[2][2]
+C6= SPACE[3][0]
+C7= SPACE[3][1]
+C8= SPACE[3][2]
+
+NEIGHBORS = [C1, C2, C3, C4, C5, C6, C7, C8]
+LIVENEIGHBORS = []
+for N = 0; N< Array.length(NEIGHBORS); C++ do
+    if N = true then
+        Array.push(LIVENEIGHBORS, N)
+    endif
+done
+if Array.length(LIVENEIGHBORS)<2 || Array.length(LIVENEIGHBORS)>4 then
+    CELL = false
+else if Array.length(LIVENEIGHBORS)=2 then
+    CELL = true
+endif
+if CELL = false && Array.length(LIVENEIGHBORS)=3 then
+    CELL = true
+endif
+      
 
 
 
