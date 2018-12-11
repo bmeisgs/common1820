@@ -1,4 +1,4 @@
-let fs = require('fs');
+const fs = require('fs');
 
 console.log(dirreader("C:/projects/bmeisgs"));
 
