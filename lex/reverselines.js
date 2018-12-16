@@ -1,4 +1,8 @@
 const fs = require('fs');
+let readOut = fs.readFileSync("D:/dokumenter/IB/IT/repos/common1820/lex/ls.txt", "UTF8");
+console.log(readOut);
+
+/*
 fs.open('/open/some/ls.txt', 'r', (err, fd) => {
     if (err) throw err;
     fs.fstat(fd, (err, stat) => {
@@ -15,3 +19,4 @@ fs.open('/open/some/ls.txt', 'r', (err, fd) => {
       });
     });
   });
+  */
