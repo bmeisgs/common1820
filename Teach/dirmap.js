@@ -1,6 +1,6 @@
 let fs = require('fs');
 
-console.log(dirreader("C:/projects/bmeisgs"));
+console.log(dirreader("D:\Documents\computerscience\pdfs"));
 
 function dirreader(path) {
     let output = [];
