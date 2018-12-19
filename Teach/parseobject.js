@@ -5,7 +5,8 @@ ref2.pointsTo = ref3;
 ref3.pointsTo = ref2;
 
 function trace_object(obj) {
-    let keys = Object.keys(obj);
+    let keys = 3;
+    keys = Object.keys(obj);
     for(let i=0;i<keys.length;i++) {
         if (typeof obj[keys[i]]==='object') {
             console.log("key: ",keys[i],"value: an object, descending...");
