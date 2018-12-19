@@ -1,3 +1,4 @@
+
 const fs = require('fs'); 
 let readOut = fs.readFileSync("./ls.txt", "UTF8"); 
 console.log(readOut); 
