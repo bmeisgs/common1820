@@ -1,6 +1,19 @@
-const fs = require('fs');
-let readOut = fs.readFileSync("D:/dokumenter/IB/IT/repos/common1820/lex/ls.txt", "UTF8");
-console.log(readOut);
+const fs = require('fs'); 
+let readOut = fs.readFileSync("./ls.txt", "UTF8"); 
+console.log(readOut); 
+
+let lines = readOut.split("\n");
+lines.reverse();
+console.log(lines);
+
+
+
+let x = [];
+for (let i = 0; i < lines.length; i++) {
+  x.unshift(lines[i]);
+}
+console.log(x);
+
 
 /*
 fs.open('/open/some/ls.txt', 'r', (err, fd) => {
