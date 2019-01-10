@@ -20,6 +20,6 @@ Bucharest.tempLow = 5.2;
 
 function cityTemp (tempHigh) {
     tempHigh.length 
-    for (i=1; i < 10; i++)
+    for (i=1; i < name.length; i++)
 
 }
