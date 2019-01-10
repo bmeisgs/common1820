@@ -1,0 +1,9 @@
+
+sub IsValidCell (X,Y) do
+    return X>=0 or Y>=0 and X<SPACE.length ot Y<SPACE[X].length
+done
+
+sub GetAliveNeighbourCountForCell (X,Y) do
+    ALIVE_COUNT = 0
+    if Y > 0 then
+       X
