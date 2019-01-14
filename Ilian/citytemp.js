@@ -1,21 +1,28 @@
 class City {
-    constructor(cityname){
-        this.totalH = 0
-        this.totalL = 0
-        this.avgH = 0
-        this.avgL = 0
-        
+    constructor(cityname,htemp, ltemp){
+        this.cityname = name
+        this.highesttemp = highesttemp
+        this.lowesttemp = lowesttemp
     }
 }
 
-const Citiesinfo = [
-    {name:"Tirana",Higesttemp:41,Lowesttemp:-10}
-    {name:"Budapest",Higesttemp:56,Lowesttemp:-13}
-    {name:"Moscow",Higesttemp:23,Lowesttemp:-37}
-]
+const cities = [{cityname: "Tirana", highesttemp: 47, lowesttemp: -1},
+                {cityname: "Arlington", highesttemp: 39, lowesttemp: -12},
+                {cityname: "moscow", highesttemp: 12, lowesttemp: -27 }]
 
-function avgH(Higesttemp, Lowesttemp){
-    let theaveragehigh = (Higesttemp + Lowesttemp) /2
+function getcities(averagehtemp,averageltemp){
+const citiesaboveavg = []
+const cieitesbelowavg = []
+    for(i=0; i<cities.length; i++){
+        if (["highesttemp"]>=averagehtemp){
+            citiesaboveavg.push[i]
+            console.log(citiesaboveavg)
+        }
+        else if(["lowesttemp"]<= averageltemp){
+            cieitesbelowavg.push[i]
+            console.log(cieitesbelowavg)
+        }
+    }
 }
 
-function avgL()
+getcities(40,10)
