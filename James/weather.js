@@ -21,5 +21,29 @@ Bucharest.tempLow = 5.2;
 function cityTemp (tempHigh) {
     tempHigh.length 
     for (i=1; i < name.length; i++)
-
 }
+
+function avgHighTemp (tempHigh) {
+    let avg = Budapest.tempHigh + Azgard.tempHigh + Bucharest.tempHigh
+    avg = avg/3
+    return avg
+}
+
+function avgLowTemp (tempLow) {
+    let avg = Budapest.tempLow + Azgard.tempLow + Bucharest.tempLow
+    avg = avg/3
+    return avg
+}
+
+function cityTemp (tempLow) {
+    tempLow.length 
+    for (i=1; i < name.length; i++)
+}
+
+avgHighTemp (tempHigh)
+avgLowTemp (tempHigh)
+
+if tempLow < avgLowTemp {
+    console.log ()
+}
+
