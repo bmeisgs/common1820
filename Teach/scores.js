@@ -45,7 +45,7 @@ class Student {
     }
 }
 
-const James = new Student('James');
+let James = new Student('James');
 James.addGrade('CSHL',6);
 James.addGrade('Math',4);
 James.addGrade('Math',2);
