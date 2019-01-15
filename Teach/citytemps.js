@@ -19,6 +19,7 @@ let cities = [];
 cities.push(new CityTemp('Budapest',-5,38));
 cities.push(new CityTemp('Stalingrad',-21,32));
 cities.push(new CityTemp('Bangalore',9,51));
+cities.push(new CityTemp('Murmansk',-50,1));
 
 let avlow = 0;
 let avhigh = 0;
