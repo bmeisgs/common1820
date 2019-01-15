@@ -41,7 +41,7 @@ class Student {
   }
   finalGrade(subject) {
       this.addSubject(subject);
-      return this.recalculate(subject);
+      return this.recalculate(subject);``
   }
 }
 

@@ -1,0 +1,13 @@
+class Citytemp{
+    constructor(){
+        this.cityname = 0;
+        this.totalhigh = 0;    
+        this.totallow = 0;
+        this.avghigh = 0;
+        this.avglow = 0;
+        this.high = ();
+        this.low = ();
+    }
+    
+}
+

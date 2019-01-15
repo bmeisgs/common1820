@@ -4,6 +4,10 @@ class Student {
         this.subjects = {};
         this.finalGrades = {};
         this.gpa = 0;
+        this.reasontolive = 0
+    }
+    getreasontolive(yes){
+        this.reasontolive = 10
     }
     addSubject(subject) {
         if (typeof this.subjects[subject]==='undefined') {
@@ -47,6 +51,7 @@ class Student {
 
 let James = new Student('James');
 James.addGrade('CSHL',6);
+console.log(James.gpa)
 James.addGrade('Math',4);
 James.addGrade('Math',2);
 James.addGrade('Math',5);

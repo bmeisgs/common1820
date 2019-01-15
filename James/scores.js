@@ -12,19 +12,8 @@ const students = [
 ];
 
 students.sort(function(name, grade) {
-    var nameA = a.name.toUpperCase();
-    var nameB = b.name.toUpperCase();
-    if (nameA < nameB) {
-      return -1;
-    }
-    if (nameA > nameB) {
-      return 1;
-    }
-    if (nameA > nameB) {
-      return 1;
-    }
-  
-    return 0;
+return a["name"]<b["name"] return -1;
+return a["name"]>b["name"] return 1;
   });
 
     console.log(students)

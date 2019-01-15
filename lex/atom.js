@@ -77,3 +77,15 @@ console.log(Hg.mass);
 console.log(Hg.charge);
 console.log(Hg.typeOf);
 console.log(Hg.energyLevels);
+
+
+
+//things that can be visible from the outside should have a getter (get) and setter (set) methods, things that shouldnt be visible from the outside dont!!
+// ^ black box paradigm (encapsulation): the parts you dont want people to see/change you encapsulate, you put up a wall between what happens on the inside behind the scenes and what can be seen and used by the outside world
+
+//interface: barrier bw two things that can interact w each other; a shared boundary across which two or more separate components of a computer system exchange information. The exchange can be between software, computer hardware, peripheral devices, humans, and combinations of these. 
+//interface in classes: name of class, (visible) public methods
+// private methods: visible from the inside of the class only; public methods: visible from the outside world
+
+//API: application programming interface (a set of subroutine definitions, communication protocols, and tools for building software. In general terms, it is a set of clearly defined methods of communication among various components)
+//APIs usually have a documentation but if designed well it should be self-explanatory
