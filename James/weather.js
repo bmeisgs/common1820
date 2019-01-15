@@ -1,49 +1,32 @@
 class cityTemp {
-    constructor(name) {
+    constructor(name, tempHigh, tempLow) {
         this.name = name;
-        this.tempHigh = {};
-        this.tempLow = {};
+        this.tempHigh = tempHigh;
+        this.tempLow = tempLow;
+    }
+    getName() {
+        return this.name;
+    }
+    getTempHigh() {
+        return this.tempHigh;
+    }
+    getTempLow() {
+        return this.tempLow;
     }
 }
 
-const Budapest = new cityTemp('Budapest');
-Budapest.tempHigh = 15.0;
-Budapest.tempLow = 6.0;
+const Budapest = new cityTemp('Budapest', 15.0, 6.0);
+const London = new cityTemp('London', 12.2, 4.7);
+const NewYork = new cityTemp('New York', 16.4, 5.9);
 
-const Azgard = new cityTemp('Azgardt');
-Azgard.tempHigh = 25.0;
-Azgard.tempLow = 6.4;
+let cityTemp = []
+cityTemp.push(Budapest);
+cityTemp.push(London);
+cityTemp.push(NewYork);
 
-const Bucharest = new cityTemp('Bucharest');
-Bucharest.tempHigh = 17.1;
-Bucharest.tempLow = 5.2;
-
-function cityTemp (tempHigh) {
-    tempHigh.length 
-    for (i=1; i < name.length; i++)
+function averageHigh (cityTemp) {
+    for (i=1; i<name.length-1; i++);
+    sum 
 }
 
-function avgHighTemp (tempHigh) {
-    let avg = Budapest.tempHigh + Azgard.tempHigh + Bucharest.tempHigh
-    avg = avg/3
-    return avg
-}
-
-function avgLowTemp (tempLow) {
-    let avg = Budapest.tempLow + Azgard.tempLow + Bucharest.tempLow
-    avg = avg/3
-    return avg
-}
-
-function cityTemp (tempLow) {
-    tempLow.length 
-    for (i=1; i < name.length; i++)
-}
-
-avgHighTemp (tempHigh)
-avgLowTemp (tempHigh)
-
-if tempLow < avgLowTemp {
-    console.log ()
-}
-
+console.log()
