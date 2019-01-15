@@ -59,7 +59,7 @@ console.log('cities below average low: ' + above);
 
 
 
-
+// useless garbage below
 
 
 
