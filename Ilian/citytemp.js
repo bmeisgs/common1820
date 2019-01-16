@@ -14,7 +14,7 @@ function getcities(averagehtemp,averageltemp){
 const citiesaboveavg = []
 const cieitesbelowavg = []
     for(i=0; i<cities.length; i++){
-        if (["highesttemp"]>=averagehtemp){
+        if (cities[i]["highesttemp"]>=averagehtemp){
             citiesaboveavg.push[i]
             console.log(citiesaboveavg)
         }
@@ -25,4 +25,4 @@ const cieitesbelowavg = []
     }
 }
 
-getcities(40,10)
+getcities(40,-10)
