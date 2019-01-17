@@ -48,7 +48,7 @@ if (fond === true) {
 // in descending order:
 let elements = [1,663,8,2,4,1,22,66,20,122];
 for (let i=0;i<elements.length-2;i++) {
-    for(let j=0;i<(elements.length-2)-(8-i);j++) {
+    for(let j=0;i<elements.length-2-8-i;j++) {
         if (elements[j]<elements[i]) {
             let temp = elements[j];
             elements[j]=elements[j+1];
@@ -62,7 +62,7 @@ for (let e=0;e<elements.length-1;e++) {
 }
 // in ascending order:
 elements = [1,663,8,2,4,1,22,66,20,122];
-for (let i=0;i<elements.length-2;i++) {
+for (let i=0;i<elements.length-2-8-i;i++) {
     for(let j=0;i<(elements.length-2)-(8-i);j++) {
         if (elements[j]>elements[i]) {
             let temp = elements[j];
@@ -82,16 +82,16 @@ elements = [1,663,8,2,4,1,22,66,20,122];
 n = 10;
 let i=0;
 while (i<=n-1) {
-    j=0
+    let j=0;
     while(j<=n-i-2) {
         if (elements[j]<elements[j+1]) {
             let temp = elements[j];
             elements[j]=elements[j+1];
             elements[j+1]=temp;
         }
-        j+=1;
+        j= j+1;
     }
-    i+=1;
+    i = i+1;
 }
 console.log('sorted elements: ');                 //console.log('sorted elements: ' + elements);
 for (let e=0;e<elements.length-1;e++) {
@@ -104,7 +104,7 @@ elements = [1,53,86,256,420,9,510,51,24,60];
 let temp = 0;
 for (let min=0;min<elements.length-2;min++) {
     i = min;
-    for(let c=min+1;c<Array.length-1;c++) {
+    for(let c=min+1;c<elements.length-1;c++) {
         if (elements[c]>elements[i]) {       //for descending order; for ascending order: if (elements[c]<elements[i]){...}
             i = c;        
         }
