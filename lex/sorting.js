@@ -32,11 +32,10 @@ while (fond === true && min<=high) {
         fond = true;
         answer = mid;
     } else if (target > values[mid]) {
-        min = mid+1;
+        min = mid++;
     } else {
         high = mid-1;
     }
-    break;
 }
 if (fond === true) {
     console.log(target + ' found at array index ' + answer);
