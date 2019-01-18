@@ -21,23 +21,23 @@ if (found === false) {
 let values = [11,12,15,16,112,118,123,145];
 let target = 15;
 let min = 0;
-let fond = false;
-let answer = 0;
+let answer = -1;
 let mid = 0;
 let high = values.length-1;
+let prevmid = -1;
 
-while (fond === true && min<=high) {
-    mid = ((min+high) /2);
+while (answer<0 && min<=high) {
+    mid = (Math.floor((min+high)/2));
     if (values[mid] === target) {
-        fond = true;
         answer = mid;
     } else if (target > values[mid]) {
-        min = mid++;
+        min = mid+1;
     } else {
         high = mid-1;
     }
+    prevmid = mid;
 }
-if (fond === true) {
+if (answer>-1) {
     console.log(target + ' found at array index ' + answer);
 } else {
     console.log(target + ' was not found');
@@ -47,9 +47,11 @@ if (fond === true) {
 //-------bubble sort-------
 // in descending order:
 let elements = [1,663,8,2,4,1,22,66,20,122];
-for (let i=0;i<elements.length-2;i++) {
-    for(let j=0;i<elements.length-2-8-i;j++) {
-        if (elements[j]<elements[i]) {
+let acc = 0;
+
+for (let i=0;i<elements.length-1;i++) {
+    for(let j=0;j<elements.length-1;j++) {
+        if (elements[j]<elements[j+1]) {
             let temp = elements[j];
             elements[j]=elements[j+1];
             elements[j+1]=temp;
@@ -62,9 +64,9 @@ for (let e=0;e<elements.length-1;e++) {
 }
 // in ascending order:
 elements = [1,663,8,2,4,1,22,66,20,122];
-for (let i=0;i<elements.length-2-8-i;i++) {
-    for(let j=0;i<(elements.length-2)-(8-i);j++) {
-        if (elements[j]>elements[i]) {
+for (let i=0;i<elements.length-1;i++) {
+    for(let j=0;j<elements.length-1;j++) {
+        if (elements[j]>elements[j+1]) {
             let temp = elements[j];
             elements[j]=elements[j+1];
             elements[j+1]=temp;
@@ -100,11 +102,11 @@ for (let e=0;e<elements.length-1;e++) {
 
 
 //--------------selection sort------------
-elements = [1,53,86,256,420,9,510,51,24,60];
+elements = [1,5,3,86,256,420,9,510,51,24,60];
 let temp = 0;
-for (let min=0;min<elements.length-2;min++) {
+for (let min=0;min<elements.length-1;min++) {
     i = min;
-    for(let c=min+1;c<elements.length-1;c++) {
+    for(let c=min+1;c<elements.length;c++) {
         if (elements[c]>elements[i]) {       //for descending order; for ascending order: if (elements[c]<elements[i]){...}
             i = c;        
         }
@@ -116,12 +118,12 @@ for (let min=0;min<elements.length-2;min++) {
 console.log('sorted array: ' + elements);
 
 
-//not sure if we had to do this as well but here it is
 //------------example of an algorithm for a specific problem/implementation of one or more sorting algorithms------------
 //task: calculate the frequency of numbers in an array
 let array = [-30,-13,4,-3,-30,-3,-3,-3,-15];
-for (let i=0;i<array.length-2;i++) {   //start of bubble sort
-    for (let j=0;j<array.length-2;j++){
+let counts = new Array();
+for (let i=0;i<array.length-1;i++) {   //start of bubble sort
+    for (let j=0;j<array.length-1;j++){
         if (array[j]>array[j+1]) {
             let temp = array[j];
             array[j] = array[j+1];
@@ -132,9 +134,9 @@ for (let i=0;i<array.length-2;i++) {   //start of bubble sort
 //array is sorted
 let previous = array[0];
 x=1;
-for (let i=1;i<array.length-1;i++) {
+for (let i=1;i<array.length;i++) {
     if (array[i] === previous) {
-        x +=1;
+        x++;
         if (i === 8) {
             console.log('number: ' + array[i] + ' frequency: ' + x);
         } else {
