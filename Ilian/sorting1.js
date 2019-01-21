@@ -7,7 +7,8 @@ for(let i = 0; i<n.length-1; i++){
         found = true;
         console.log(n[i] + " found at position: " + i);
     }
-    else{
-        console.log(x + " not found");
-    }
+}
+
+if(found === false){
+    console.log(x + " not found");
 }

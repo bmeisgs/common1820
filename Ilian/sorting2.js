@@ -4,15 +4,19 @@ let found = false;
 let min = 0;
 let mid = 0;
 let answer = 0;
+let high = values.length-1
 
-while(found === true && min <= values.length-1){
-    mid = (min+values.length-1)/2
+while(found === false && min <= high){
+    mid = Math.floor((min+high)/2);
     if(values[mid] === target){
         found = true;
         answer = mid; 
     }
     else if(target>values[mid]){
         min = mid++;
+    }
+    else{
+        high = mid--;
     }
 }
 
