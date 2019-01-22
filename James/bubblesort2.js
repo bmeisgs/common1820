@@ -2,9 +2,9 @@ let elements = [1,663,8,2,4,1,22,66,20,122]
 let n = 10
 let i = 0
 
-while(i=<n-i-1){
+while(i<=n-1) {
     let j = 0;
-    while(j<=n-i-2){
+    while(j <= n-i-2){
         if (elements[j]>elements[j+1]){
             let temp = elements[j]
             elements[j] = elements[j+1]
