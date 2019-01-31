@@ -1,4 +1,7 @@
-function TRACKSLEEP (MOVEMENT, HEART, H, M, S)
+
+
+
+function TRACKSLEEP (MOVEMENT, HEART, H, M, S) do
     MOVEMENT = Wristband.getMovement()
     HEART = Wristband.getHeartRate() 
     Smartphone.setTimer(30, Smartphone.getActivity())
@@ -12,7 +15,7 @@ function TRACKSLEEP (MOVEMENT, HEART, H, M, S)
     output ('heart rate abnormal')
     end if
     output ('Time: ', H, 'hours', M, 'minutes')
-
+done
 
 if SLEEP = TRUE then 
     TRACKSLEEP(MOVEMENT,HEART,H,M,S)
