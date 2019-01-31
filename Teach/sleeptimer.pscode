@@ -1,0 +1,39 @@
+let DEEP_SLEEP_MINUTES = 0
+let LIGHT_SLEEP_MINUTES = 0
+let AWAKE_MINUTES = 0
+let DEEP_SLEEP_MAX_ACTIVITY = 0.1
+let LIGHT_SLEEP_MAX_ACTIVITY = 0.3
+let SLEEP_PHONE_MAX_ACTIVITY = 0
+let DEEP_SLEEP_MAX_HEARTRATE = 50
+let LIGHT_SLEEP_MAX_HEARTRATE = 70
+let SLEEP_PERIOD_START_HOUR = 22
+let SLEEP_PERIOD_END_HOUR = 9
+let LAST_STATE = "awake"
+let CURRENT_STATE = "awake"
+let EXEC_FREQ_SECONDS = 10
+let SLEEP_LOG = ["deepsleep":0,"lightsleep":0,"awake":0]
+
+function Measure() do
+	if Smartphone.time.getHour()<SLEEP_PERIOD_END_HOUR AND Smartphone.time.getHour()>SLEEP_PERIOD_START_HOUR then 
+		if Smartphone.getActivity() <= SLEEP_PHONE_MAX_ACTIVITY then
+			let HR = Wristband.getHeartRate()
+			let MV = Wristband.getMovement()
+			if MV <= DEEP_SLEEP_MAX_ACTIVITY AND HR <= DEEP_SLEEP_MAX_HEARTRATE then
+				CURRENT_STATE = "deepsleep"
+			else if MV <= LIGHT_SLEEP_MAX_ACTIVITY AND HR <= LIGHT_SLEEP_MAX_HEARTRATE then
+				CURRENT_STATE = "lightsleep"
+			else
+				CURRENT_STATE = "awake"
+			endif
+		else
+			CURRENT_STATE = "awake"
+		endif
+		SLEEP_LOG[CURRENT_STATE] += EXEC_FREQ_SECONDS
+		LAST_STATE = CURRENT_STATE
+	endif
+done
+
+while 1 = 1 do
+	sleep(EXEC_FREQ_SECONDS)
+	Measure()
+done
