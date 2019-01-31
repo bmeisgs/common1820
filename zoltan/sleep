@@ -1,0 +1,25 @@
+loop while true
+	MOVEMENT = wristband.getMOVEMENT()
+	WRISTBAND = wristband.getHEARTRATE()
+	if HEARTRATE < 60 AND MOVEMENT < 0.6 then
+		SLEEPSTARTHOUR = Smartphone.time.getHour()
+		SLEEPSTARTMINUTE = Smartphone.time.getMinute()
+		SLEEPSTARTSECOND = Smartphone.time.getSeconds()
+		SLEEPING = TRUE
+		loop while SLEEPING
+			MOVEMENT = wristband.getMOVEMENT()
+			WRISTBAND = wristband.getHEARTRATE()
+			if HEARTRATE > 60 AND MOVEMENT > 0.6 then
+				SLEEPENDHOUR = Smartphone.time.getHour()
+				SLEEPENDMINUTE = Smartphone.time.getMinute()
+				SLEEPENDSECOND = Smartphone.time.getSeconds()
+				SLEEPING = FALSE
+			end if
+		SLEPTHOURS = SLEEPENDHOUR - SLEEPSTARTHOUR
+		SLEPTMINUTES = SLEEPENDMINUTE - SLEEPSTARTMINUTE
+		SLEPTSECONDS = SLEEPENDSECOND - SLEEPSTARTSECOND
+
+		return "You have slept for " + SLEPTHOURS + " hours, " + SLEPTMINUTES + " minutes, and " + SLEPTSECONDS + " seconds"
+
+	endif
+end loop
