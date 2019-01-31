@@ -9,7 +9,7 @@ for(let min = 0; min<Elements.length-2; min++){
             i = current;
         }
     }
-    temp = Elements[i];
+    let temp = Elements[i];
     Elements[i] = Elements[min];
     Elements[min] = temp;
 }
