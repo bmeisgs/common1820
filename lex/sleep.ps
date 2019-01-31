@@ -1,0 +1,19 @@
+function TRACKSLEEP (MOVEMENT, HEART, H, M, S)
+    MOVEMENT = Wristband.getMovement()
+    HEART = Wristband.getHeartRate() 
+    Smartphone.setTimer(30, Smartphone.getActivity())
+    H = Smartphone.time.getHour()
+    M = Smartphone.time.getMinute()
+    S = Smartphone.time.getSeconds()
+    if HEART>40 AND HEART<50 then
+    output ('heart rate normal')
+    end if
+    else 
+    output ('heart rate abnormal')
+    end if
+    output ('Time: ', H, 'hours', M, 'minutes')
+
+
+if SLEEP = TRUE then 
+    TRACKSLEEP(MOVEMENT,HEART,H,M,S)
+end if

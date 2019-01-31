@@ -87,7 +87,7 @@ while (i<=n-1) {
     let j=0;
     while(j<=n-i-2) {
         if (elements[j]<elements[j+1]) {
-            let temp = elements[j];
+            let temp = elements[j];                             // temporary variable = accumulator
             elements[j]=elements[j+1];
             elements[j+1]=temp;
         }
@@ -121,9 +121,8 @@ console.log('sorted array: ' + elements);
 //------------example of an algorithm for a specific problem/implementation of one or more sorting algorithms------------
 //task: calculate the frequency of numbers in an array
 let array = [-30,-13,4,-3,-30,-3,-3,-3,-15];
-let counts = new Array();
-for (let i=0;i<array.length-1;i++) {   //start of bubble sort
-    for (let j=0;j<array.length-1;j++){
+for (let i=0;i<array.length-2;i++) {   //start of bubble sort
+    for (let j=0;j<array.length-2;j++){
         if (array[j]>array[j+1]) {
             let temp = array[j];
             array[j] = array[j+1];
