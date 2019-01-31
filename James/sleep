@@ -1,0 +1,28 @@
+Wristband.getRestingHR() -> 0-200
+Wristband.getHeartRate() -> 0-200
+ASLEEP = false
+TIMEASLEEP = 0
+
+Smartphone.time.getHour() -> 0-23
+Smartphone.time.getMinute() -> 0-59
+Smartphone.time.getSeconds() -> 0-59
+
+function SLEEPING 
+    if getHeartRate =< getRestingHR*0.85 then
+        ASLEEP = true
+    else if
+        ASLEEP = false
+end function
+
+if ASLEEP = true
+Smartphone.setTimer(numberOfSeconds,functionToCall)
+end if
+
+if ASLEEP = false
+TIMEASLEEP = TIMEASLEEP + numberOfSeconds
+end if
+
+if Smartphone.time.getSeconds = 0
+function SLEEPING
+function AWAKE
+
