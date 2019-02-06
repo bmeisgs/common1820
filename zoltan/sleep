@@ -38,6 +38,7 @@ function Measure() do
 		endif
 		if LAST_STATE != CURRENT_STATE then
 			SLEEP_STATES_ARRAY.push([TIME, LAST_STATE])
+			TIME = 0
 		else
 			TIME = TIME + EXEC_FREQ_SECONDS
 		endif
