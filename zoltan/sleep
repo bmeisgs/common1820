@@ -1,25 +1,54 @@
-loop while true
-	MOVEMENT = wristband.getMOVEMENT()
-	WRISTBAND = wristband.getHEARTRATE()
-	if HEARTRATE < 60 AND MOVEMENT < 0.6 then
-		SLEEPSTARTHOUR = Smartphone.time.getHour()
-		SLEEPSTARTMINUTE = Smartphone.time.getMinute()
-		SLEEPSTARTSECOND = Smartphone.time.getSeconds()
-		SLEEPING = TRUE
-		loop while SLEEPING
-			MOVEMENT = wristband.getMOVEMENT()
-			WRISTBAND = wristband.getHEARTRATE()
-			if HEARTRATE > 60 AND MOVEMENT > 0.6 then
-				SLEEPENDHOUR = Smartphone.time.getHour()
-				SLEEPENDMINUTE = Smartphone.time.getMinute()
-				SLEEPENDSECOND = Smartphone.time.getSeconds()
-				SLEEPING = FALSE
-			end if
-		SLEPTHOURS = SLEEPENDHOUR - SLEEPSTARTHOUR
-		SLEPTMINUTES = SLEEPENDMINUTE - SLEEPSTARTMINUTE
-		SLEPTSECONDS = SLEEPENDSECOND - SLEEPSTARTSECOND
 
-		return "You have slept for " + SLEPTHOURS + " hours, " + SLEPTMINUTES + " minutes, and " + SLEPTSECONDS + " seconds"
+SLEEP_STATES_ARRAY = []
+DEEP_SLEEP_MAX_ACTIVITY = 0.1
+LIGHT_SLEEP_MAX_ACTIVITY = 0.3
+SLEEP_PHONE_MAX_ACTIVITY = 0
+DEEP_SLEEP_MAX_HEARTRATE = 50
+LIGHT_SLEEP_MAX_HEARTRATE = 70
+SLEEP_PERIOD_START_HOUR = 22
+SLEEP_PERIOD_END_HOUR = 9
+EXEC_FREQ_SECONDS = 10
 
+LAST_STATE = "awake"
+CURRENT_STATE = "awake"
+
+# solution A
+SLEEP_LOG = ["deepsleep":0,"lightsleep":0,"awake":0]
+
+# solution B
+DEEP_SLEEP_SECONDS = 0
+LIGHT_SLEEP_SECONDS = 0
+AWAKE_SECONDS = 0
+
+
+function Measure() do
+	if Smartphone.time.getHour()<SLEEP_PERIOD_END_HOUR AND Smartphone.time.getHour()>SLEEP_PERIOD_START_HOUR then 
+		if Smartphone.getActivity() <= SLEEP_PHONE_MAX_ACTIVITY then
+			HR = Wristband.getHeartRate()
+			MV = Wristband.getMovement()
+			if MV <= DEEP_SLEEP_MAX_ACTIVITY AND HR <= DEEP_SLEEP_MAX_HEARTRATE then
+				CURRENT_STATE = "deepsleep"
+			else if MV <= LIGHT_SLEEP_MAX_ACTIVITY AND HR <= LIGHT_SLEEP_MAX_HEARTRATE then
+				CURRENT_STATE = "lightsleep"
+			else
+				CURRENT_STATE = "awake"
+			endif
+		else
+			CURRENT_STATE = "awake"
+		endif
+		if LAST_STATE != CURRENT_STATE then
+			SLEEP_STATES_ARRAY.push([TIME, LAST_STATE])
+		else
+			TIME = TIME + EXEC_FREQ_SECONDS
+		endif
 	endif
-end loop
+	LAST_STATE = CURRENT_STATE
+	return SLEEP_STATES_ARRAY
+done
+
+loop while true
+	wait(EXEC_FREQ_SECONDS)
+	Measure()
+endloop
+
+
