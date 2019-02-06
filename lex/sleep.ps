@@ -1,4 +1,13 @@
-
+algorithm that monitors sleep
+input from smart band heart rate and movement activity bw 0 and 1 0 no movement 1 very much movement
+checks activity based on how much time has passed /eg activity in the last 10 secs y or no or whether there was activity but it wasnt that recent/
+Wristband.getMovement() -> 0..1
+Wristband.getHeartRate() -> 0-200
+Smartphone.getActivity() -> 0..1
+Smartphone.time.getHour() -> 0-23
+Smartphone.time.getMinute() -> 0-59
+Smartphone.time.getSeconds() -> 0-59
+Smartphone.setTimer(numberOfSeconds,functionToCall) //to execute function after x number of seconds
 
 
 function TRACKSLEEP (MOVEMENT, HEART, H, M, S) do
