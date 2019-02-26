@@ -1,4 +1,9 @@
-
+class Sleep {
+	constructor() {
+		this.current_state = CURRENT_STATE
+		this.exec_freq = EXEC_FREQ_SECONDS
+	}
+}
 
 DEEP_SLEEP_MAX_ACTIVITY = 0.1
 LIGHT_SLEEP_MAX_ACTIVITY = 0.3
@@ -8,17 +13,9 @@ LIGHT_SLEEP_MAX_HEARTRATE = 70
 SLEEP_PERIOD_START_HOUR = 22
 SLEEP_PERIOD_END_HOUR = 9
 EXEC_FREQ_SECONDS = 10
-
 LAST_STATE = "awake"
 CURRENT_STATE = "awake"
-
-# solution A
 SLEEP_LOG = ["deepsleep":0,"lightsleep":0,"awake":0]
-
-# solution B
-DEEP_SLEEP_SECONDS = 0
-LIGHT_SLEEP_SECONDS = 0
-AWAKE_SECONDS = 0
 
 
 function Measure() do
@@ -36,33 +33,22 @@ function Measure() do
 		else
 			CURRENT_STATE = "awake"
 		endif
-		# solution A
-		SLEEP_LOG[CURRENT_STATE] = SLEEP_LOG[CURRENT_STATE] + EXEC_FREQ_SECONDS
-		# solution B
-		if CURRENT_STATE = "deepsleep" then
-			DEEP_SLEEP_SECONDS = DEEP_SLEEP_SECONDS + EXEC_FREQ_SECONDS
-		else if CURRENT_STATE = "lightsleep" then
-			LIGHT_SLEEP_MAX_ACTIVITY = LIGHT_SLEEP_SECONDS + EXEC_FREQ_SECONDS
-		else if CURRENT_STATE = "awake" then
-			AWAKE_SECONDS = AWAKE_SECONDS + EXEC_FREQ_SECONDS
+		//idea is make an array and store deepsleep value plus how long it was in object fasion.
+		   should look like: [state: deepsleep, time: 1 hour
+							  state: deepsleep, time: 1 hour
+							  state: deepsleep, time: 1 hour
+							  state: deepsleep, time: 1 hour
+							  state: deepsleep, time: 1 hour
+							  state: deepsleep, time: 1 hour
+							  ]//
 		endif
-		# solution B/2
-		switch CURRENT_STATE
-			case "deepsleep":
-				DEEP_SLEEP_SECONDS = DEEP_SLEEP_SECONDS + EXEC_FREQ_SECONDS
-				break switch
-			case "lightsleep":
-				LIGHT_SLEEP_MAX_ACTIVITY = LIGHT_SLEEP_SECONDS + EXEC_FREQ_SECONDS
-				break switch
-			case "awake":
-				AWAKE_SECONDS = AWAKE_SECONDS + EXEC_FREQ_SECONDS
-				break switch
-			default:
-				print "WHAT THE EFF MAN?!"
-		endswitch
 		LAST_STATE = CURRENT_STATE
 	endif
 done
+
+loop while CURRENT_STATE != "awake"
+FINAL_RESULT = new Sleep()
+		FINAL_RESULT.Measure(CURRENT_STATE, EXEC_FREQ_SECONDS)
 
 loop while true
 	wait(EXEC_FREQ_SECONDS)
