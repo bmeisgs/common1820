@@ -1,4 +1,39 @@
+state sleeping:                                                                                   sleeping -> preignition
+queue thermostat                                                                                  preignition -> ignition || error  
+??                                                                                                ignition -> burning || error 
+                                                                                                  burning -> idling || turning off || preignition || error 
+state preignition:                                                                                idling -> turning off || preignition
+fan /int preIgnitionFan: pre-ignition fan time in seconds, default: 2/                            turning off -> preignition || sleeping || error 
+pump /int preIgnitionWaterCirculate: pre-ignition water circulation time in seconds, default: 3/   
+                                                       
+state ignition:
+fan /dev.airFan.getRPM() -> int currentRPM/ /dev.airFan.setRPM(int targetRPM) -> null, targetRPM between 0(turn off)-2000(max RPM)/ /int fanRange: fan rotation allowed range, default: 100/ /int minFanRPM: min air intake fan rotation, below which the fan is considered stopped, default: 200/ /int maxFanRPM: max air intake fan rotation, above which the fan is considered overworked, default: 2500/
+pump /dev.waterPump.getSpeed() -> float currentSpeedInM3perS/ /dev.waterPump.getState() -> bool true:operating;false:stopped/ /dev.waterPump.setSpeed(float newTargetSpeed) -> null/ /dev.waterPump.setState(bool newState) -> null/ /int currentTargetWaterSpeed: what speed the water should circulate/ /float minWaterFlowMS: min water flow speed in m3/s, below which the pump is deemed stopped, default: 0.001/ /float maxWaterFlowMS: max water flow speed in m3/s, above which the pump is considered overrun, default: 0.02/ /int minFanRPM: min air intake fan rotation, below which the fan is considered stopped, default: 200/ /int maxFanRPM: max air intake fan rotation, above which the fan is considered overworked, default: 2500/ /float waterSpeedRange: water flow speed allowed range, default: 0.1/
+gas /dev.gasValve.getAperture() -> int 0(shut off)-100(completely open)/ /dev.gasValve.setAperture(int newAperture) -> null/ /int currentTargetGasHeat: what temperature should the flame be in/ /int minGasValve: min gas intake valve percent, below which the gas is considered effectively shut off, default: 1/ /int maxGasValve: max gas intake valve percent, above which the unit cannot be set, default: 100
+ignition /int ignitionTimeIntervalS: ignition gap time, default: 1/ /int maxIgniteAttempts: max ignition attempts, default: 5/ /dev.sparkIgniter.ignite() -> null, produces one spark/
+/bool shouldIgnite: if it's in ignition state/
 
+state burning:
+fan
+pump
+gas
+/bool shouldBurn: if it should burn the gas lights/
+??
+
+state idling:
+pump
+??
+
+state turning off:
+fan /int postShutoffAirIntake: post-shutoff air intake fan operation time in seconds, default: 2/
+pump /int postShutoffCirculation: post-shutoff circulation time in seconds, default: 10/
+
+state error:
+X
+/int currentErrorState: if not 0, then an error number. If the system is in an error state, it cannot operate any longer and requires restart./
+
+
+----------------------------------------------
 function checkErrors(ERRORS) do 
     if ERRORS != 0 then
         return false
