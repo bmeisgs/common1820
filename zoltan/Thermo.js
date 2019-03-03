@@ -51,7 +51,10 @@ function devwaterSensorgetPressure() {
 function devwaterSensorgetTemp() {
 }
 /////////////////////////////////////////////////
-function waitOneSec() {
+function devFlameSensorGetTemp() {
+}
+/////////////////////////////////////////////////
+function waitOneSec(); {
 }
 /////////////////////////////////////////////////
 /////////////////////////////////////////////////
@@ -66,21 +69,141 @@ let shouldTakeInAir = false
 let shouldCirculateWater = false
 let currentTargetGasHeat
 let currentTargetWaterSpeed
+let currentState = "Sleeping"
 //Actual code starts here
 
-function safetyChecks() {
-    if(devwaterSensorgetPressure > maxWaterPressure) {
-        shouldBurn = false
-        currentErrorState = 1
-        return currentErrorState
+/*
+States:
+Error
+Sleeping
+Pre-Ignition
+Ignition
+Burning
+Idling
+Turning off
+*/
+function wait(time) {
+    for(let i = 0; i<time; i++)
+        waitOneSec();
+        checkSafety();
+}
+
+function checkSafety() {
+    if((devwaterPumpgetSpeed()<minWaterFlowMS) && (devwaterPumpgetState() = "On")) {
+        currentState = "Error";
     }
-    else if()
+    else if(devwaterPumpgetSpeed()>maxWaterFlowMS) {
+        currentState = "Error"
+    }
+    else if(devwaterSensorgetPressure() > maxWaterPressure) {
+        currentState = "Error"
+    }
+    else if((devairFangetRPM() < minFanRPM) && devthermostatshouldOperate()) {
+        currentState = "Error"
+    }
+    else if(devairFangetRPM() > maxFanRPM) {
+        currentState = "Error"
+    }
+    else if(devFlameSensorGetTemp() > maxFlameTemp) {
+        currentState = "Error"
+    }
 }
 
 while(true) {
-    if(shouldHeat == true) {
-        if(devwaterSensorgetTemp < tempTarget - waterTempRange) {
-            //
-        }
+    switch(currentState) {
+        case "Sleeping":
+            while(devthermostatshouldOperate() == false) {
+            }
+            currentState = "Pre-Ignition";
+            checkSafety();
+            break;
+
+        case "Pre-Ignition":
+            devwaterPumpsetState("On");
+            devwaterPumpsetSpeed((minWaterFlowMS+maxWaterFlowMS)/2);
+            devairFansetRPM(minFanRPM);
+            if(preIgnitionFan>preIgnitionWaterCirculate) {
+                wait(preIgnitionFan);
+            }
+            else {
+                wait(preIgnitionWaterCirculate);
+            }
+            currentState = "Ignition";
+            checkSafety();
+            break;
+
+        case "Ignition":
+            devgasValvesetAperture((minGasValve+maxGasValve)/2);
+            for(let i = 0; i<maxIgniteAttempts; i++) {
+                devsparkIgniterignite();
+                wait(ignitionTimeIntervalS);
+                if(devFlameSensorGetTemp() > minFlameTemp) {
+                    i = maxIgniteAttempts;
+                    currentState = "Burning";
+                }
+                else if(i=maxIgniteAttempts-1) {
+                    currentState = "Error";
+                }
+            }
+            checkSafety();
+            break;
+
+        case "Burning":
+            wait(30);
+            checkSafety();
+            while(currentState == "Burning") {
+                if(devwaterSensorgetTemp() > tempTarget + waterTempRange) {
+                    currentState = "Idling"
+                }
+                else if(devFlameSensorGetTemp() < minFlameTemp) {
+                    currentState = "Pre-Ignition"
+                }
+                else if(devthermostatshouldOperate() == false) {
+                    currentState = "Turning off"
+                }
+                checkSafety();
+                wait(1);
+            }
+            break;
+
+        case "Idling":
+            devgasValvesetAperture(0);
+            wait(5);
+            while(currentState == "Idling") {
+                if(devwaterSensorgetTemp() < tempTarget - waterTempRange) {
+                    currentState = "Pre-Ignition"
+                }
+                else if(devthermostatshouldOperate() == false) {
+                    currentState = "Turning off"
+                }
+                checkSafety();
+            }
+            break;
+
+        case "Turning off":
+            devgasValvesetAperture(0);
+            if(postShutoffCirculation>postShutoffAirIntake) {
+                wait(postShutoffCirculation);
+            }
+            else {
+                wait(postShutoffAirIntake);
+            }
+            devairFansetRPM(0);
+            devwaterPumpsetSpeed(0);
+            devwaterPumpsetState("Off");
+            break;
+
+        case "Error":
+            devgasValvesetAperture(0);
+            devairFansetRPM(0);
+            devwaterPumpsetSpeed(0);
+            devwaterPumpgetState("Off");
+            console.log("An error has occured, if you are sure nothing is wrong with the system, please restart")
+            break;
+
+        default:
+            currentState = "Error";
+            break;
     }
+    wait(1);
 }
