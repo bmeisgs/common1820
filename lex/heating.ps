@@ -1,0 +1,354 @@
+state sleeping:                                                                                   sleeping -> preignition
+queue thermostat                                                                                  preignition -> ignition || error  
+??                                                                                                ignition -> burning || error 
+                                                                                                  burning -> idling || turning off || preignition || error 
+state preignition:                                                                                idling -> turning off || preignition
+fan /int preIgnitionFan: pre-ignition fan time in seconds, default: 2/                            turning off -> preignition || sleeping || error 
+pump /int preIgnitionWaterCirculate: pre-ignition water circulation time in seconds, default: 3/   
+                                                       
+state ignition:
+fan /dev.airFan.getRPM() -> int currentRPM/ /dev.airFan.setRPM(int targetRPM) -> null, targetRPM between 0(turn off)-2000(max RPM)/ /int fanRange: fan rotation allowed range, default: 100/ /int minFanRPM: min air intake fan rotation, below which the fan is considered stopped, default: 200/ /int maxFanRPM: max air intake fan rotation, above which the fan is considered overworked, default: 2500/
+pump /dev.waterPump.getSpeed() -> float currentSpeedInM3perS/ /dev.waterPump.getState() -> bool true:operating;false:stopped/ /dev.waterPump.setSpeed(float newTargetSpeed) -> null/ /dev.waterPump.setState(bool newState) -> null/ /int currentTargetWaterSpeed: what speed the water should circulate/ /float minWaterFlowMS: min water flow speed in m3/s, below which the pump is deemed stopped, default: 0.001/ /float maxWaterFlowMS: max water flow speed in m3/s, above which the pump is considered overrun, default: 0.02/ /int minFanRPM: min air intake fan rotation, below which the fan is considered stopped, default: 200/ /int maxFanRPM: max air intake fan rotation, above which the fan is considered overworked, default: 2500/ /float waterSpeedRange: water flow speed allowed range, default: 0.1/
+gas /dev.gasValve.getAperture() -> int 0(shut off)-100(completely open)/ /dev.gasValve.setAperture(int newAperture) -> null/ /int currentTargetGasHeat: what temperature should the flame be in/ /int minGasValve: min gas intake valve percent, below which the gas is considered effectively shut off, default: 1/ /int maxGasValve: max gas intake valve percent, above which the unit cannot be set, default: 100
+ignition /int ignitionTimeIntervalS: ignition gap time, default: 1/ /int maxIgniteAttempts: max ignition attempts, default: 5/ /dev.sparkIgniter.ignite() -> null, produces one spark/
+/bool shouldIgnite: if it's in ignition state/
+
+state burning:
+fan
+pump
+gas
+/bool shouldBurn: if it should burn the gas lights/
+??
+
+state idling:
+pump
+??
+
+state turning off:
+fan /int postShutoffAirIntake: post-shutoff air intake fan operation time in seconds, default: 2/
+pump /int postShutoffCirculation: post-shutoff circulation time in seconds, default: 10/
+
+state error:
+X
+/int currentErrorState: if not 0, then an error number. If the system is in an error state, it cannot operate any longer and requires restart./
+
+
+----------------------------------------------
+function checkErrors(ERRORS) do 
+    if ERRORS != 0 then
+        return false
+    else
+        return true
+    end if
+done
+
+function heat () do
+    if dev.waterSensor.getTemp()<(-5) OR dev.waterSensor.getTemp()>5 then
+        dev.thermostat.shouldOperate() = false
+        currentErrorState++
+    end if 
+    if dev.thermostat.shouldOperate() = false then
+        shouldHeat = false
+    else 
+        shouldHeat=true
+    end if
+    return shouldHeat
+done
+
+function ignite() do
+    minFlameTemp = 50
+    maxFlameTemp = 1900
+    if dev.flameSensor.getTemp()<(-100) OR dev.flameSensor.getTemp()>100 then
+        currentErrorState++
+    end if
+    if dev.flameSensor.getTemp()>maxFlameTemp then
+        currentErrorState++
+    end if
+    if checkErrors(currentErrorState)=false AND dev.flameSensor.getTemp()<minFlameTemp then
+        dev.sparkIgniter.ignite()
+        return shouldIgnite = true
+    else
+        return shouldIgnite = false
+    end if
+done
+
+function burnGas() do 
+    minGasValve = 1
+    maxGasValve = 100
+    if currentTargetGasHeat> minGasValve AND currentTargetGasHeat<minGasValve then
+        dev.gasValve.setAperture(int newAperture)
+    else 
+        currentErrorState++
+    end if
+    if dev.gasValve.getAperture() < 0 OR dev.gasValve.getAperture() > 100 then
+        currentErrorState++
+    end if
+    if checkErrors(currentErrorState)= true then
+        return shouldBurn = true
+    else
+        return shouldBurn = false
+    end if
+done
+
+function airIntake() do 
+    minFanRPM = 200
+    maxFanRPM = 2500
+    currentRPM = dev.airFan.getRPM()
+    if currentRPM<minFanRPM OR currentRPM>maxFanRPM then
+        currentErrorState++
+    end if 
+    if targetRPM>0 AND targetRPM<2000 then
+        if currentRPM != targetRPM then
+            dev.airFan.setRPM(targetRPM)
+            end if
+        end if 
+    else
+        currentErrorState++
+    end if 
+    if checkErrors=true then
+        return shouldTakeInAir = true
+    else
+        return shouldTakeInAir = false
+    end if
+done
+
+function circulateWater() do 
+    minWaterFlowMS = 0.001
+    maxWaterFlowMS = 0.02
+    minWaterPressure = 0.9
+    maxWaterPressure = 2.0
+    if dev.waterSensor.getPressure()<minWaterPressure OR dev.waterSensor.getPressure()>maxWaterPressure
+        currentErrorState++
+    end if 
+    currentSpeedInM3perS = dev.waterPump.getSpeed()
+    if newTargetSpeed != currentSpeedInM3perS then
+        currentSpeedInM3perS = dev.waterPump.setSpeed(newTargetSpeed)
+    end if
+    if currentSpeedInM3perS<(-0.1) OR currentSpeedInM3perS>0.1 then
+        currentErrorState++
+    end if
+    if dev.waterPump.getSpeed()<minWaterFlowMS OR dev.waterPump.getSpeed()>maxWaterFlowMS then
+        currentErrorState++
+    end if 
+    STATE = dev.waterPump.getState()
+    if checkErrors(currentErrorState)=true then
+        if STATE = false then
+            STATE = dev.waterPump.setState(true)
+        end if 
+    else if checkErrors(currentErrorState)=false then
+        if STATE = true then
+            STATE = dev.waterPump.setState(false)
+        end if
+    end if
+    if STATE = true then
+        return shouldCirculateWater = true
+    else 
+        return shouldCirculateWater = false
+    end if 
+done
+
+function main (tempTarget) do 
+    DEFAULT = 65
+    if tempTarget>DEFAULT then
+        HEAT = heat()
+        if HEAT = true then
+            airIntake()
+            burnGas()
+            preIgnitionWaterCirculate = 3
+            preIgnitionFan = 2
+            ignitionTimeIntervalS = 1
+            loop for I=0;ignite()=false AND I<=5;I++ do 
+                ignite()
+                wait(ignitionTimeIntervalS)
+            done
+            circulateWater()
+        end if
+        if currentTemp = tempTarget then
+            airIntake()
+            postShutoffAirIntake = 2
+            wait(postShutoffAirIntake)
+            circulateWater()
+            postShutoffCirculation=10
+            wait(postShutoffCirculation)
+            shouldBurn = false
+            shouldCirculateWater = false
+            shouldHeat = false
+            shouldTakeInAir = false
+        end if
+    end if
+done
+
+
+
+_______________________________________________________________
+
+CONTROLLED DEVICES:
+
+Water pump:
+
+dev.waterPump.getSpeed() -> float currentSpeedInM3perS
+dev.waterPump.getState() -> bool true:operating;false:stopped
+dev.waterPump.setSpeed(float newTargetSpeed) -> null
+dev.waterPump.setState(bool newState) -> null
+
+
+Gas intake valve:
+
+dev.gasValve.getAperture() -> int 0(shut off)-100(completely open)
+dev.gasValve.setAperture(int newAperture) -> null
+
+
+Air intake fan:
+
+dev.airFan.getRPM() -> int currentRPM
+dev.airFan.setRPM(int targetRPM) -> null, targetRPM between 0(turn off)-2000(max RPM)
+
+
+Spark igniter:
+
+dev.sparkIgniter.ignite() -> null, produces one spark
+
+
+
+ADDITIONAL SENSORS AND INPUTS:
+
+Thermostat input:
+
+dev.thermostat.shouldOperate() -> bool true:shouldheat;false:shouldnotheat
+Water state
+dev.waterSensor.getPressure() -> float bars (pressure in bars, usually around 1.5-2.0)
+dev.waterSensor.getTemp() -> int degrees (in degrees celsius, like 55)
+
+
+Flame:
+
+dev.flameSensor.getTemp() -> int degrees (in degrees celsius, like 800)
+
+
+PARAMETERS:
+
+User-set:
+
+int tempTarget: target water temperature in deg celsius, default: 65
+
+
+Firmware-set (manufacturer-set):
+NB: all range parameters mean relative range, so a setting of 5 means from target-5 to target+5.
+
+int waterTempRange: target water temperature range, default: 5
+int fanRange: fan rotation allowed range, default: 100
+int flameTempRange: flame temperature allowed range, default: 100
+float waterSpeedRange: water flow speed allowed range, default: 0.1
+int minFlameTemp: min flame temperature, below which the light is considered dead, default: 50
+int maxFlameTemp: max flame temperature, above which the system should shut down, default: 1900
+float minWaterPressure: min water pressure, below which a critical error should be sent, default: 0.9
+float maxWaterPressure: max water pressure, above which a critical error should be sent, default: 2.0
+int minFanRPM: min air intake fan rotation, below which the fan is considered stopped, default: 200
+int maxFanRPM: max air intake fan rotation, above which the fan is considered overworked, default: 2500
+int minGasValve: min gas intake valve percent, below which the gas is considered effectively shut off, default: 1
+int maxGasValve: max gas intake valve percent, above which the unit cannot be set, default: 100
+float minWaterFlowMS: min water flow speed in m3/s, below which the pump is deemed stopped, default: 0.001
+float maxWaterFlowMS: max water flow speed in m3/s, above which the pump is considered overrun, default: 0.02
+int maxIgniteAttempts: max ignition attempts, default: 5
+int ignitionTimeIntervalS: ignition gap time, default: 1
+int preIgnitionWaterCirculate: pre-ignition water circulation time in seconds, default: 3
+int preIgnitionFan: pre-ignition fan time in seconds, default: 2
+int postShutoffAirIntake: post-shutoff air intake fan operation time in seconds, default: 2
+int postShutoffCirculation: post-shutoff circulation time in seconds, default: 10
+
+
+System states and global values
+
+int currentErrorState: if not 0, then an error number. If the system is in an error state, it cannot operate any longer and requires restart.
+bool shouldHeat: controlled by the thermostat
+bool shouldIgnite: if it's in ignition state
+bool shouldBurn: if it should burn the gas lights
+bool shouldTakeInAir: if it needs to operate the air intake
+bool shouldCirculateWater: if it needs to operate the pump
+int currentTargetGasHeat: what temperature should the flame be in
+int currentTargetWaterSpeed: what speed the water should circulate
+
+----------------------------------------------------------------------------------------------
+
+!!in all manufacturer set related stuff and exceding limits do if and currentErrorState++
+
+mini-functions that check whether it should/needs to //all return bool//:
+- heat /controlled by thermostat/:
+    -target water temp range
+    -get water temp => check range -> errors
+    -if thermostat shouldOperate then
+    -return: shouldHeat (thermostat should operate true/false) 
+- ignite /if its in ignition state/:
+    -flame temp max and min
+    -flame temp range
+    -get flame temp => check max min range -> errors
+    -if good, ignite spark /produces one spark/
+    -return: shouldIgnite (t/f)
+- burn the gas lights ():
+    -gas valve max and min 
+    -if currentTargetGasHeat max min range, then 
+        -set gas valve aperture
+        -if setAperture is not within range then error++
+        -if dev.gasValve.getAperture() is >0 and <= 100 then proceed
+        -else error++
+    -check errors
+    -return: shouldBurn (t/f)
+- operate air intake:
+    -fanRPM max and min
+    -fan range
+    -get fan RPM => check max min -> errors
+    -if target RPM between 0 and 2000
+        -if current RPM != targetRPM then set fan RPM 
+    -else error++
+    -check errors
+    -return: shouldTakeInAir (t/f)
+- circulate water /ie operate the pump/:
+    -water flow max and min
+    -water pressure max and min
+    -water speed range
+    -get water pressure => check max min and errors
+    -get water speed -> errors
+    -if currentTargetWaterSpeed != currentSpeedInM3perS then set speed
+    -if getspeed error bad, error++
+    -if no errors, get state
+    -if get state = false, then set state true
+    -else if errors, get state
+    -if get state = true, then set state false
+    -check errors
+    -if get state = true, then
+    -return: should circulate water = true, else return: false
+- checks if current error state good:
+    if currentErrorState != 0 then 
+        true
+    else
+        false
+
+main function (tempTarget):
+if tempTarget>65 /default/ then:
+    heat
+    if should heat:
+        air intake 
+
+        burn the gas lights ()
+
+        if preignition stuff is ok then
+        declare ignitionTimeIntervalS
+        loop ignite attempts
+        call ignite function
+        wait ignitionTimeIntervalS
+        end loop
+
+        circulate water
+
+
+        if currentTemp = tempTarget 
+        call air intake 
+        wait for postShutoffAirIntake seconds
+        call circulate water
+        wait for postShutoffCirculation seconds
+        shouldBurn = false
+        shouldCirculateWater = false
+        shouldHeat = false
+        shouldTakeInAir = false
+
+        
