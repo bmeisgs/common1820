@@ -21,7 +21,16 @@ class Task {
 	}
 }
 
+/**
+ * Implements a task queue that can poll tasks in given intervals
+ */
 class TaskQueue {
+    /**
+     * 
+     * @constructor
+     * @param {Number} intval the number of milliseconds between each queue run
+     * @param {Function} executor the executor function that is called when the job is a string
+     */
     constructor(intval,executor) {
         this.interval = intval;
         this.executor = executor;
@@ -56,6 +65,10 @@ class TaskQueue {
             }
         }
     }
+    /**
+     * 
+     * @param {String|Function} task add a new task in the queue
+     */
     add(task) {
         this.q.push(task);
     }
@@ -220,6 +233,13 @@ class Igniter {
 }
 
 class Thermostat {
+    /**
+     * Create an instance of a Thermostat object.
+     * @constructor
+     * @param {String} operation the modus operandi, "cooler" or "heater"
+     * @param {Number} targettemp the initial target temperature
+     * @param {Object} controlledDev the controlled device that must implement a .shouldOperate(bool) method 
+     */
     constructor(operation,targettemp,controlledDev) {
         this.operation = operation;
         this.ambienttemp = 20.0;
@@ -227,10 +247,18 @@ class Thermostat {
         this.controlledDevice = controlledDev;
         this.operate();
     }
+    /**
+     * Set the current ambient temperature
+     * @param {Number} newTemp the new temperature value, in degrees Celsius 
+     */
     setAmbientTemp(newTemp) {
         this.ambienttemp = newTemp;
         console.log('ambient temperature is now set to',newTemp,'degrees celsius');
     }
+    /**
+     * Return the current ambient temperature as known by the thermostat, in degrees Celsius
+     * @returns {Number}
+     */
     getAmbientTemp() {
         return this.ambienttemp;
     }
@@ -241,6 +269,9 @@ class Thermostat {
     getTargetTemp() {
         return this.targettemp;
     }
+    /**
+     * 
+     */
     operate() {
         if (this.operation==='cooler') {
             this.controlledDevice.shouldOperate(this.getAmbientTemp()>this.getTargetTemp());
@@ -270,6 +301,7 @@ class Heater {
         }
     }
     shouldOperate(should) {
+
     }
     start_fan() {
         this.air = true;
@@ -301,3 +333,4 @@ class Heater {
 
 let htr = new Heater();
 let tstat = new Thermostat('heater',24.0,htr);
+
