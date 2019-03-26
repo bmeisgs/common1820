@@ -143,66 +143,7 @@ class SystemState {
 		this.ignite = ignite;
 		this.burn = burn;
 		this.air = air;
-		this.water = water;
-    }
-    static intoState(targetState) {
-        if (targetState==='sleep') {
-            this.general = 'sleep';
-            sysQueue.clear();
-            this.stop_fan();
-            this.stop_pump();
-            this.stop_gas();
-        }
-        else if (targetState==='preignite') {
-            sysQueue.clear();
-            if (conf.preIgnitionWaterCirculate<conf.preIgnitionFan) {
-                sysQueue.add(new Task('start_fan',0));
-                sysQueue.add(new Task('start_pump',conf.preIgnitionFan-conf.preIgnitionWaterCirculate));
-                sysQueue.add(new Task('state_to_ignite',conf.preIgnitionWaterCirculate));
-            } else {
-                sysQueue.add(new Task('start_pump',0));
-                sysQueue.add(new Task('start_fan',conf.preIgnitionWaterCirculate-conf.preIgnitionFan));
-                sysQueue.add(new Task('state_to_ignite',conf.preIgnitionFan));
-            }
-            this.general = 'preignite';
-            this.ignite = false;
-            this.burn = false;
-            this.air = false;
-            this.water = false;
-        }
-        else if (targetState==='ignite') {
-            sysQueue.clear();
-            gasValve.setAperture(igniteGasValve);
-            for(let i=0;i<conf.maxIgniteAttempts;i++) {
-                sysQueue.add(new Task('spark',conf.ignitionTimeIntervalS));
-            }
-            this.general = 'ignite';
-            this.ignite = true;
-            this.burn = false;
-        }
-        else if (targetState==='burn') {
-            this.general = 'burn';
-            this.ignite = false;
-            this.burn = true;
-        }
-        else if (targetState==='idle') {
-            this.general = 'idle';
-            sysQueue.add(new Task('stop_fan',conf.postShutoffAirIntake));
-        }
-        else if (targetState==='turnoff') {
-            this.general = 'turnoff';
-            this.stop_gas();
-            sysQueue.clear();
-            if (conf.postShutoffCirculation<conf.postShutoffAirIntake) {
-                sysQueue.add(new Task('stop_pump',conf.postShutoffCirculation));
-                sysQueue.add(new Task('stop_fan',conf.postShutoffAirIntake-conf.postShutoffCirculation));
-                sysQueue.add(new Task('state_to_sleep',0));
-            } else {
-                sysQueue.add(new Task('stop_fan',conf.postShutoffAirIntake));
-                sysQueue.add(new Task('stop_pump',conf.postShutoffCirculation-conf.postShutoffAirIntake));
-                sysQueue.add(new Task('state_to_sleep',0));
-            }
-        }
+        this.water = water;
     }
 	effectChanges(target) {
 		//deal with thermostat changes
@@ -344,15 +285,19 @@ class Thermostat {
 class Heater {
     constructor(conf) {
         this.conf = conf;
+		this.general = 'sleep';
+		this.heat = false;
+		this.ignite = false;
+		this.burn = false;
+		this.air = false;
+        this.water = false;
         this.airFan = new AirFan();
         this.gasValve = new GasValve();
         this.waterPump = new WaterPump();
         this.igniter = new Igniter();
         this.state = new SystemState();
         this.sysQueue = new TaskQueue(1000,this.sysQCommand);
-        sysQCommand('state_to_sleep');
-        this.sysQCommand
-        this.sysQCommand()
+        this.state_to_sleep();
     }
     sysQCommand(cmd) {
         if (typeof this[cmd]==='function') {
@@ -362,31 +307,95 @@ class Heater {
     shouldOperate(should) {
 
     }
+    intoState(targetState) {
+        if (targetState==='sleep') {
+            this.general = 'sleep';
+            this.sysQueue.clear();
+            this.stop_fan();
+            this.stop_pump();
+            this.stop_gas();
+        }
+        else if (targetState==='preignite') {
+            this.sysQueue.clear();
+            if (conf.preIgnitionWaterCirculate<conf.preIgnitionFan) {
+                sysQueue.add(new Task('start_fan',0));
+                sysQueue.add(new Task('start_pump',conf.preIgnitionFan-conf.preIgnitionWaterCirculate));
+                sysQueue.add(new Task('state_to_ignite',conf.preIgnitionWaterCirculate));
+            } else {
+                sysQueue.add(new Task('start_pump',0));
+                sysQueue.add(new Task('start_fan',conf.preIgnitionWaterCirculate-conf.preIgnitionFan));
+                sysQueue.add(new Task('state_to_ignite',conf.preIgnitionFan));
+            }
+            this.general = 'preignite';
+            this.ignite = false;
+            this.burn = false;
+            this.air = false;
+            this.water = false;
+        }
+        else if (targetState==='ignite') {
+            sysQueue.clear();
+            gasValve.setAperture(igniteGasValve);
+            for(let i=0;i<conf.maxIgniteAttempts;i++) {
+                sysQueue.add(new Task('spark',conf.ignitionTimeIntervalS));
+            }
+            this.general = 'ignite';
+            this.ignite = true;
+            this.burn = false;
+        }
+        else if (targetState==='burn') {
+            this.general = 'burn';
+            this.ignite = false;
+            this.burn = true;
+        }
+        else if (targetState==='idle') {
+            this.general = 'idle';
+            sysQueue.add(new Task('stop_fan',conf.postShutoffAirIntake));
+        }
+        else if (targetState==='turnoff') {
+            this.general = 'turnoff';
+            this.stop_gas();
+            sysQueue.clear();
+            if (conf.postShutoffCirculation<conf.postShutoffAirIntake) {
+                sysQueue.add(new Task('stop_pump',conf.postShutoffCirculation));
+                sysQueue.add(new Task('stop_fan',conf.postShutoffAirIntake-conf.postShutoffCirculation));
+                sysQueue.add(new Task('state_to_sleep',0));
+            } else {
+                sysQueue.add(new Task('stop_fan',conf.postShutoffAirIntake));
+                sysQueue.add(new Task('stop_pump',conf.postShutoffCirculation-conf.postShutoffAirIntake));
+                sysQueue.add(new Task('state_to_sleep',0));
+            }
+        }
+    }
+
+
+
+
+
     start_fan() {
         this.air = true;
-        airFan.setRPM(conf.maxFanRPM);
+        this.airFan.setRPM(conf.maxFanRPM);
     }
     stop_fan() {
         this.air = false;
-        airFan.setRPM(0);
+        this.airFan.setRPM(0);
     }
     start_pump() {
         this.water = true;
-        waterPump.setSpeed(conf.maxWaterFlow);
+        this.waterPump.setSpeed(conf.maxWaterFlow);
     }
     stop_pump() {
         this.water = false;
-        waterPump.setSpeed(0);
+        this.waterPump.setSpeed(0);
     }
     stop_gas() {
         this.burn = false;
-        gasValve.setAperture(0);
+        this.gasValve.setAperture(0);
     }
     state_to_ignite() {
-        this.intoState('ignite');
+        this.state.intoState('ignite');
     }
     state_to_sleep() {
-        this.intoState('sleep');
+        this.state.intoState('sleep');
     }
 }
 
