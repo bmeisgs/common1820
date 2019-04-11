@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+    <body>
+        <div id="plaf">
+            sadj sajhd jskahd kjsa hdkjsahdkjsah <span class="normo">UBBO</span> dkjsah dkjsa hdkjsa hdkjsad
+        </div>
+        <div id="praaaf">
+            sad;lk sakd;lsakd;lsakd;lsakd;lsasadj sajhd jskahd kjsa hdkjsahdkjsah dkjsah dkjsa hdkjsa hdkjsad
+        </div>
+        <p id="luff">
+            ;sakjd lksajdlksa jdlksa jdlksa jdlksa <span class="normo cooler watcha[33]">UBBA</span> jdlksa jdlksa djlksa jdlksa jdlksad
+        </p>
+        <p class="fluff normo">
+            Spicy jalapeno bacon ipsum dolor amet in minim esse dolor turkey frankfurter sirloin kevin ex veniam. Biltong nostrud elit aliqua laborum. T-bone sed bresaola consequat velit. Esse reprehenderit aliquip ut, tri-tip meatloaf laborum culpa id jerky.
+        </p>
+        <input type="text" value="blumorfo" id="flik">
+        <br>
+        <hr>
+        <img src="thisdoesnotexist.jpg" alt="sum text" title="sumother">
+        <script>
+        function randomColor() {
+            let red = Math.round(Math.random()*255);
+            let grn = Math.round(Math.random()*255);
+            let blu = Math.round(Math.random()*255);
+            return 'rgb('+red.toString()+','+grn.toString()+','+blu.toString()+')';
+        }
+        let handler = (ev) => {
+            ev.target.style.color = randomColor();
+        };
+        document.addEventListener('click',handler);
+        let newhandle = (ev) => {
+            if (ev.target.classList.contains('normo')) {
+                ev.target.parentElement.style.backgroundColor = randomColor();
+                console.log(ev);
+            }
+        };
+        document.getElementsByTagName('BODY').item(0).addEventListener('click',newhandle);
+        setInterval(() => {
+            document.getElementsByTagName('BODY').item(0).style.backgroundColor = randomColor();
+        },10);
+        </script>
+    </body>
+</html>
