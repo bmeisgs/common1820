@@ -18,26 +18,203 @@
         <hr>
         <img src="thisdoesnotexist.jpg" alt="sum text" title="sumother">
         <script>
-        function randomColor() {
-            let red = Math.round(Math.random()*255);
-            let grn = Math.round(Math.random()*255);
-            let blu = Math.round(Math.random()*255);
-            return 'rgb('+red.toString()+','+grn.toString()+','+blu.toString()+')';
-        }
-        let handler = (ev) => {
-            ev.target.style.color = randomColor();
-        };
-        document.addEventListener('click',handler);
-        let newhandle = (ev) => {
-            if (ev.target.classList.contains('normo')) {
-                ev.target.parentElement.style.backgroundColor = randomColor();
-                console.log(ev);
+            class RGBColor {
+                constructor(redVal=0,greenVal=0,blueVal=0) {
+                    this.red = redVal;
+                    this.green = greenVal;
+                    this.blue = blueVal;
+                }
+                copy() {
+                    let x = new RGBColor();
+                    x.match(this);
+                    return x;
+                }
+                getRGBRepresentation() {
+                    return 'rgb('+this.red.toString()+','+this.green.toString()+','+this.blue.toString()+')';
+                }
+                setRandom() {
+                    this.red = Math.round(Math.random()*255);
+                    this.green = Math.round(Math.random()*255);
+                    this.blue = Math.round(Math.random()*255);
+                    return this;
+                }
+                setComplement() {
+                    this.red = 255-this.red;
+                    this.green = 255-this.green;
+                    this.blue = 255-this.blue;
+                    return this;
+                }
+                static getRandomColor() {
+                    let c = new RGBColor(0,0,0);
+                    c.setRandom();
+                    return c.getRGBRepresentation();
+                }
+                applyToElement(trgElem,isBgr) {
+                    if (isBgr) {
+                        trgElem.style.backgroundColor = this.getRGBRepresentation();
+                    } else {
+                        trgElem.style.color = this.getRGBRepresentation();
+                    }
+                    return this;
+                }
+                getColorFromElement(trgElem,isBgr) {
+                    let clr = '';
+                    if (isBgr) {
+                        clr = trgElem.style.backgroundColor;
+                    } else {
+                        clr = trgElem.style.color;
+                    }
+                    let match = clr.match(/^rgb\((\d{1,3}),\s*(\d{1,3}),\s*(\d{1,3})\)$/);
+                    if (match===null || clr==='') {
+                        clr = (isBgr) ? 'rgb(255, 255, 255)' : 'rgb(0, 0, 0)';
+                    } else {
+                        this.red = parseInt(match[1]);
+                        this.green = parseInt(match[2]);
+                        this.blue = parseInt(match[3]);
+                    }
+                    return this;
+                }
+                getOneStepCloser(trgColor,redStep=1,greenStep=1,blueStep=1) {
+                    if (trgColor.red<this.red) {
+                        redStep = -1*redStep;
+                    }
+                    if (trgColor.green<this.green) {
+                        greenStep = -1*greenStep;
+                    }
+                    if (trgColor.blue<this.blue) {
+                        blueStep = -1*blueStep;
+                    }
+                    if (trgColor.red!==this.red) {
+                        this.red += redStep;
+                        if ((redStep<0 && this.red<trgColor.red) || (redStep>0 && this.red>trgColor.red)) {
+                            this.red = trgColor.red;
+                        }
+                    }
+                    if (trgColor.green!==this.green) {
+                        this.green += greenStep;
+                        if ((greenStep<0 && this.green<trgColor.green) || (greenStep>0 && this.green>trgColor.green)) {
+                            this.green = trgColor.green;
+                        }
+                    }
+                    if (trgColor.blue!==this.blue) {
+                        this.blue += blueStep;
+                        if ((blueStep<0 && this.blue<trgColor.blue) || (blueStep>0 && this.blue>trgColor.blue)) {
+                            this.blue = trgColor.blue;
+                        }
+                    }
+                    return this;
+                }
+                calculateStep(trgColor,allowSteps) {
+                    if (allowSteps===0) {
+                        return [1,1,1];
+                    }
+                    let rdiff = (this.red>trgColor.red) ? this.red-trgColor.red : trgColor.red-this.red;
+                    let gdiff = (this.green>trgColor.green) ? this.green-trgColor.green : trgColor.green-this.green;
+                    let bdiff = (this.blue>trgColor.blue) ? this.blue-trgColor.blue : trgColor.blue-this.blue;
+                    return [Math.ceil(rdiff/allowSteps),Math.ceil(gdiff/allowSteps),Math.ceil(bdiff/allowSteps)];
+                }
+                match(trgColor) {
+                    this.red = trgColor.red;
+                    this.green = trgColor.green;
+                    this.blue = trgColor.blue;
+                    return this;
+                }
+                matches(trgColor) {
+                    return this.red===trgColor.red && this.green===trgColor.green && this.blue===trgColor.blue;
+                }
             }
-        };
-        document.getElementsByTagName('BODY').item(0).addEventListener('click',newhandle);
-        setInterval(() => {
+            class ColorFader {
+                constructor(trgElem,srcColor='',trgColor='',isBgr=false,allowedFrames=0) {
+                    if (typeof ColorFader['instances']==='undefined') {
+                        ColorFader.instances = [];
+                    }
+                    this.from = srcColor;
+                    this.to = trgColor;
+                    this.elm = trgElem;
+                    this.bgr = isBgr;
+                    ColorFader.killOnElement(trgElem,isBgr);
+                    if (srcColor==='' || !srcColor instanceof RGBColor) {
+                        this.from = new RGBColor();
+                        this.from.getColorFromElement(this.elm,this.bgr);
+                    }
+                    if (trgColor==='!') {
+                        this.to = new RGBColor();
+                        this.to.match(this.from).setComplement();
+                    }
+                    else if (trgColor==='' || !trgColor instanceof RGBColor) {
+                        this.to = new RGBColor(0,0,0);
+                        this.to.setRandom();
+                    }
+                    ColorFader.addInstance(this);
+                    /* this modification is for the constant-timed fades */
+                    let steps = this.from.calculateStep(this.to,allowedFrames);
+                    this.redStep = steps[0];
+                    this.greenStep = steps[1];
+                    this.blueStep = steps[2];
+                    /* modification ends */
+                    this.timer = setInterval(this.move.bind(this),40);
+                    this.active = true;
+                }
+                move() {
+                    this.from.getOneStepCloser(this.to,this.redStep,this.greenStep,this.blueStep).applyToElement(this.elm,this.bgr);
+                    if (this.from.matches(this.to)) {
+                        this.stop();
+                    }
+                }
+                stop() {
+                    if (this.active===true) {
+                        this.active = false;
+                        if (this.timer!==null) {
+                            clearInterval(this.timer);
+                            this.timer = null;
+                        }
+                        ColorFader.removeInstance(this);
+                    }
+                }
+                static addInstance(inst) {
+                    ColorFader.instances.push(inst);
+                }
+                static removeInstance(inst) {
+                    ColorFader.instances = ColorFader.instances.filter((elm) => {
+                        return elm!==inst;
+                    });
+                }
+                static killOnElement(trgElem,isBgr) {
+                    let x;
+                    for(x=0;x<ColorFader.instances.length;x++) {
+                        if (ColorFader.instances[x].elm===trgElem && ColorFader.instances[x].bgr===isBgr) {
+                            ColorFader.instances[x].stop();
+                        }
+                    }
+                }
+            }
+
+        document.addEventListener('mousedown',(ev) => {
+            ev.preventDefault();
+            if (ev.button===2) {
+                let bgc = new RGBColor();
+                bgc.getColorFromElement(ev.target,true);
+                let fgc = new RGBColor();
+                fgc.getColorFromElement(ev.target,false);
+                let acc = bgc.copy();
+                bgc.match(fgc);
+                fgc.match(acc);
+            } else {
+                new ColorFader(ev.target,'','',false,25);
+            }
+        });
+        document.getElementsByTagName('BODY').item(0).addEventListener('click',(ev) => {
+            ev.preventDefault();
+            if (ev.target.classList.contains('normo')) {
+                new ColorFader(ev.target.parentNode,'','',true,50);
+            }
+        });
+        /*
+        let ivid = setInterval(() => {
             document.getElementsByTagName('BODY').item(0).style.backgroundColor = randomColor();
         },10);
+        clearInterval(ivid);
+        */
         </script>
     </body>
 </html>
