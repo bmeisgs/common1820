@@ -52,7 +52,7 @@ loop while true
     if ERROR = true then
         turnOffAll
         goToError
-    else wait10Sec
+    else wait1Sec
     
 
 

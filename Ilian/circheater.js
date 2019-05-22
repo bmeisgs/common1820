@@ -350,8 +350,7 @@ class Heater {
         this.igniter = new Igniter();
         this.state = new SystemState();
         this.sysQueue = new TaskQueue(1000,this.sysQCommand);
-        sysQCommand('state_to_sleep');
-        this.sysQCommand
+        this.sysQCommand('state_to_sleep');
         this.sysQCommand()
     }
     sysQCommand(cmd) {
@@ -364,29 +363,29 @@ class Heater {
     }
     start_fan() {
         this.air = true;
-        airFan.setRPM(conf.maxFanRPM);
+        this.airFan.setRPM(conf.maxFanRPM);
     }
     stop_fan() {
         this.air = false;
-        airFan.setRPM(0);
+        this.airFan.setRPM(0);
     }
     start_pump() {
         this.water = true;
-        waterPump.setSpeed(conf.maxWaterFlow);
+        this.waterPump.setSpeed(conf.maxWaterFlow);
     }
     stop_pump() {
         this.water = false;
-        waterPump.setSpeed(0);
+        this.waterPump.setSpeed(0);
     }
     stop_gas() {
         this.burn = false;
-        gasValve.setAperture(0);
+        this.gasValve.setAperture(0);
     }
     state_to_ignite() {
         this.intoState('ignite');
     }
     state_to_sleep() {
-        this.intoState('sleep');
+        this.state.intoState('sleep');
     }
 }
 
